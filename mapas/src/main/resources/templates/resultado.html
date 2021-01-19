@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<link th:rel="stylesheet" th:href="@{assets/bootstrap-select-1.13.9/dist/css/bootstrap-select.css}"/>
+<link th:rel="stylesheet" th:href="@{webjars/bootstrap/4.0.0-2/css/bootstrap.min.css} "/>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<table class="table">
+		<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">fecha</th>
+					<th scope="col">pais</th>
+					<th scope="col">ciudad</th>
+					<th scope="col">calidadAVG</th>
+					<th scope="col">Ver Dato</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="dato : ${datos}">
+					<td th:text="${dato.id}" scope="row"></td>
+					<td th:text="${dato.fecha}"></td>
+					<td th:text="${dato.pais}"></td>
+					<td th:text="${dato.ciudad}"></td>
+					<td th:text="${dato.calidadAVG}"></td>
+					<td>
+					<button th:onclick="verDatos([[${dato}]])" class="btn btn-danger">verDato</button>
+					</td>
+				</tr>
+			</tbody>
+	</table>
+	<script src="verDato.js"></script>
+</body>
+</html>

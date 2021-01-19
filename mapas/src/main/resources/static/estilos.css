@@ -1,0 +1,8 @@
+#map {
+    height: 600px;
+    widht: 100%;
+}
+
+#datoDistrito {
+    background-image: linear-gradient(to top, #50cc7f 0%, #f5d100 100%);
+}

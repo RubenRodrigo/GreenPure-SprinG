@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head"></head>
+<body>
+	<div class="navbar">
+		<a href="/">GreenPure</a>
+	</div>
+	<div id="datoDistrito">
+		<h1 th:text="${distritoNombre}"></h1>
+		<h1 th:text="${estadoCalidad}"></h1>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-6">
+				<canvas id="calidad" width="800" height="400"></canvas>
+			</div>
+			<div class="col-6">
+				<canvas id="temperatura" width="800" height="400"></canvas>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6">
+				<canvas id="concentracion" width="800" height="400"></canvas>
+			</div>
+			<div class="col-6">
+				<canvas id="humedad" width="800" height="400"></canvas>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				<canvas id="humoMetano" width="800" height="400"></canvas>
+			</div>
+		</div>
+	</div>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+	<script type="text/javascript" th:src="@{../distritoDato.js}"></script>
+	<script th:inline="javascript">		
+		var horas = /*[[${horas}]]*/ 'default'
+
+		function lineDataChart(ctx, data, type){
+			const chart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					labels: horas.map(item => item),
+					datasets: [
+						{
+							label: type,
+							borderColor: 'red',
+							data: data.map(item => item),
+						}
+					]
+				}
+			})
+		}
+
+		function lineDoubleDataChart(ctx, data1, data2, type1, type2){
+			const chart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					labels: horas.map(item => item),
+					datasets: [
+						{
+							label: type1,
+							borderColor: 'red',
+							data: data1.map(item => item),
+						},
+						{
+							label: type2,
+							borderColor: 'green',
+							data: data2.map(item => item),
+						}
+					]
+				}
+			})
+		}
+
+		function renderCharts(){
+			const ctxCa = document.getElementById('calidad').getContext('2d')
+			const ctxTe = document.getElementById('temperatura').getContext('2d')
+			const ctxCo = document.getElementById('concentracion').getContext('2d')
+			const ctxHu = document.getElementById('humedad').getContext('2d')
+			const ctxHuMe = document.getElementById('humoMetano').getContext('2d')
+			var calidad = /*[[${calidad}]]*/ 'default'
+			var temperatura = /*[[${temperatura}]]*/ 'default'
+			var concentracion = /*[[${concentracion}]]*/ 'default'
+			var humedad = /*[[${humedad}]]*/ 'default'
+			var humo = /*[[${humo}]]*/ 'default'
+			var metano = /*[[${metano}]]*/ 'default'
+			console.log(humo)
+			console.log(metano)
+			lineDataChart(ctxCa, calidad, "Calidad")
+			lineDataChart(ctxTe, temperatura, "Temperatura")
+			lineDataChart(ctxCo, concentracion, "Concentracion")
+			lineDataChart(ctxHu, humedad, "Humedad")
+			lineDoubleDataChart(ctxHuMe, humo, metano, "Humo", "Metano")
+		}
+		renderCharts()
+	</script>
+</body>
+</html>
