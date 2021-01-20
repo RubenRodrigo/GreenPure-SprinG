@@ -28,21 +28,26 @@ public class controlador {
 
 	@GetMapping("/")
 	public String index(Model model) {
-		List<datoMapa> datos = service.findAllMapa();
-		model.addAttribute("datos", datos);
+		List<datoMapa> datosMapa = service.findAllMapa();
+		model.addAttribute("datosMapa", datosMapa);
 		return "index";
 	}
 
 	@GetMapping("/distrito/{id}")
 	public String distritoDato(@PathVariable String id, Model model) {
-		// data from API
+		// district data from API
 		datoDistrito distrito = service.findDistrict(id);
+
+		// map data from API
+		List<datoMapa> datosMapa = service.findAllMapa();
 		
 		// set data in variables
 		int idDistrito = distrito.getIdDistrito();
 		String distritoNombre = distrito.getNombre();
 		String ciudadNombre = distrito.getCiudadNombre();
 		int calidadAVG = distrito.getCalidadAVG();
+		String latitud = "";
+		String longitud = "";
 		
 		// create arrays to sensors
 		List<Datos> datos = distrito.getDatos();
@@ -63,6 +68,8 @@ public class controlador {
 			humedad.add(dato.getHumedad());
 			humo.add(dato.getSensorHumo()? "1": "0");
 			metano.add(dato.getSensorMetano()? "1": "0");
+			latitud = dato.getLatitud();
+			longitud = dato.getLongitud();
 		}
 		
 		// send data to view
@@ -77,7 +84,10 @@ public class controlador {
 		model.addAttribute("humedad", humedad);
 		model.addAttribute("humo", humo);
 		model.addAttribute("metano", metano);
-		model.addAttribute("estadoCalidad", estadoCalidad(60));
+		model.addAttribute("estadoCalidad", estadoCalidad(calidadAVG));
+		model.addAttribute("latitud", latitud);
+		model.addAttribute("longitud", longitud);
+		model.addAttribute("datosMapa", datosMapa);
 
 		return "distritoDato";
 	}

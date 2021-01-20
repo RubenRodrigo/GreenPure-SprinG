@@ -2,7 +2,50 @@
 <html>
 <head th:replace="fragments/header :: head"></head>
 <body>
-    <div id="map"></div>
+	<div class="hero">
+    	<div class="showcase">
+    		<div class="flex-left">
+    			<div class="row">
+    				<div class="col-3 logo-img p-0">
+    					<img src="/img/logo.png" alt="" />
+    				</div>
+    				<div class="col-9 logo-content p-0">
+		      			<p class="logo">Green Pure</p>
+		      			<h6>Aire de Calidad</h6>
+    				</div>
+    			</div>
+    		</div>
+      		<div class="flex-right">
+      			<a href="#mapa">Mapa</a>
+      			<a href="#ubicaciones">Ubicaciones</a>
+      			<a href="#contactos">Contactos</a>
+      		</div>
+      	</div>
+	</div>
+	<section class="container">
+		<div class="p-4">
+			<h2 class="mapa text-center pb-4 m-4" id="mapa">Mapa Mundial</h2>
+			<div class="map-container-color">
+				<div class="calidad-good">
+					<span></span>
+					<p> Bueno</p>
+				</div>
+				<div class="calidad-moderate">
+					<span></span>
+					<p>Moderado</p>
+				</div>
+				<div class="calidad-regular">
+					<span></span>
+					<p>Regular</p>
+				</div>
+				<div class="calidad-bad">
+					<span></span>
+					<p>Malo</p>
+				</div>
+			</div>
+		</div>
+	    <div id="map"></div>
+	</section>
 	<table class="table">
 		<thead>
 				<tr>
@@ -15,7 +58,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="dato : ${datos}">
+				<tr th:each="dato : ${datosMapa}">
 					<td th:text="${dato.idDistrito}" scope="row"></td>
 					<td th:text="${dato.ciudad}"></td>
 					<td th:text="${dato.latitud}"></td>
@@ -27,10 +70,9 @@
 				</tr>
 			</tbody>
 	</table>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
 	<script src="main.js" type="text/javascript"></script>
 	<script th:inline="javascript">
-		setData(/*[[${datos}]]*/ 'default')		
+		setData(/*[[${datosMapa}]]*/ 'default')		
 	</script>
 	<script async defer
 	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDaeWicvigtP9xPv919E-RNoxfvC-Hqik&callback=initMap">

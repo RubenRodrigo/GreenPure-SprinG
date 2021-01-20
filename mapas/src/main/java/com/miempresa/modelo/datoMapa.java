@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class datoMapa {
 	private int idDistrito;
     private String ciudad;
+    private String distrito;
     private String latitud;
     private String longitud;
     private String humedad;
@@ -27,6 +28,12 @@ public class datoMapa {
 	}
 	public void setCiudad(String ciudad) {
 		this.ciudad = ciudad;
+	}
+	public String getDistrito() {
+		return distrito;
+	}
+	public void setDistrito(String distrito) {
+		this.distrito = distrito;
 	}
 	public String getLatitud() {
 		return latitud;

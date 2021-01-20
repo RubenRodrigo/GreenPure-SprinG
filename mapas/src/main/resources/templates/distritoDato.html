@@ -1,100 +1,343 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: head"></head>
-<body>
-	<div class="navbar">
-		<a href="/">GreenPure</a>
-	</div>
-	<div id="datoDistrito">
-		<h1 th:text="${distritoNombre}"></h1>
-		<h1 th:text="${estadoCalidad}"></h1>
-	</div>
-	<div class="container">
-		<div class="row">
-			<div class="col-6">
-				<canvas id="calidad" width="800" height="400"></canvas>
-			</div>
-			<div class="col-6">
-				<canvas id="temperatura" width="800" height="400"></canvas>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-6">
-				<canvas id="concentracion" width="800" height="400"></canvas>
-			</div>
-			<div class="col-6">
-				<canvas id="humedad" width="800" height="400"></canvas>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-6 offset-md-3">
-				<canvas id="humoMetano" width="800" height="400"></canvas>
-			</div>
-		</div>
-	</div>
-  	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-	<script type="text/javascript" th:src="@{../distritoDato.js}"></script>
-	<script th:inline="javascript">		
-		var horas = /*[[${horas}]]*/ 'default'
+  <head th:replace="fragments/header :: head"></head>
+  <body>
+    <div>
+      <h1 class="text-center" th:text="${distritoNombre}"></h1>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-6 p-3">
+          <div class="card">
+            <div class="card-header" id="header-data">
+              <div class="row">
+                <div class="col-6">
+                  <p th:text="${estadoCalidad}"></p>
+                </div>
+                <div class="col-6">
+                  <p th:text="${calidadAVG}"></p>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="map" id="map"></div>
+            </div>
+            <div class="card-footer scrollit">
+              <table class="table">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Hora</th>
+                    <th scope="col">Calidad</th>
+                    <th scope="col">Temperatura</th>
+                    <th scope="col">Concentacion</th>
+                    <th scope="col">Humedad</th>
+                    <th scope="col">Humo</th>
+                    <th scope="col">Metano</th>
+                  </tr>
+                </thead>
+                <tbody id ="dataTable">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 p-3">
+          <div class="row pl-4 pb-4 mb-4">
+            <canvas id="calidad" width="800" height="400"></canvas>
+          </div>
+          <div class="row pl-4 pb-4 mb-4">
+            <canvas id="chartCommon" width="800" height="400"></canvas>
+          </div>
+          <div class="row pl-4 pb-4 mb-4">
+            <canvas id="humoMetano" width="800" height="400"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    <script type="text/javascript" th:src="@{/main.js}"></script>
+    <script th:inline="javascript">		
+  var horas = /*[[${horas}]]*/ 'default'
+  var calidad = /*[[${calidad}]]*/ 'default'
+  var temperatura = /*[[${temperatura}]]*/ 'default'
+  var concentracion = /*[[${concentracion}]]*/ 'default'
+  var humedad = /*[[${humedad}]]*/ 'default'
+  var humo = /*[[${humo}]]*/ 'default'
+  var metano = /*[[${metano}]]*/ 'default'
 
-		function lineDataChart(ctx, data, type){
-			const chart = new Chart(ctx, {
-				type: 'line',
-				data: {
-					labels: horas.map(item => item),
-					datasets: [
-						{
-							label: type,
-							borderColor: 'red',
-							data: data.map(item => item),
-						}
-					]
-				}
-			})
-		}
+  var estadoCalidad = /*[[${estadoCalidad}]]*/ 'default'
 
-		function lineDoubleDataChart(ctx, data1, data2, type1, type2){
-			const chart = new Chart(ctx, {
-				type: 'line',
-				data: {
-					labels: horas.map(item => item),
-					datasets: [
-						{
-							label: type1,
-							borderColor: 'red',
-							data: data1.map(item => item),
-						},
-						{
-							label: type2,
-							borderColor: 'green',
-							data: data2.map(item => item),
-						}
-					]
-				}
-			})
-		}
+function lineCalidadChart(ctx, data){
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: horas.map(item => item),
+      datasets: [
+        {
+          label: "Calidad",
+          borderColor: 'red',
+          data: data.map(item => item),
+        }
+      ]
+    },
+    options: {
+          scales:{
+            xAxes: [{
+              gridLines: {
+                display: false,
+              }
+            }]
+          },
+          title: {
+            display: true,
+            text: 'Calidad - ultimas horas',
+            fontSize: 25,
+            padding: 20,
+            fontColor: '#12619c'
+          },
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 10,
+              boxWidth: 25,
+              fontFamily: 'system-ui',
+              fontColor: 'black',
+            }
+          },
+          layout:{
+            padding: {
+              right: 50,
+            }
+          },
+          tooltips: {
+            backgroundColor: '#0584f6',
+            titleFontSize: 20,
+            xPadding: 20,
+            yPadding: 20,
+            bodyFontSize: 15,
+            bodySpacing: 10,
+            mode: 'x'
+          },
+          elements: {
+            line: {
+              borderWidth: 4,
+              fill: false,
+            },
+            point: {
+              radius: 4,
+              borderWidth: 4,
+              backgroundColor: 'white',
+              hoverRadius: 8,
+              hoverBorderWidth: 4,
+            }
+          }
+        }
+  })
+}
 
-		function renderCharts(){
-			const ctxCa = document.getElementById('calidad').getContext('2d')
-			const ctxTe = document.getElementById('temperatura').getContext('2d')
-			const ctxCo = document.getElementById('concentracion').getContext('2d')
-			const ctxHu = document.getElementById('humedad').getContext('2d')
-			const ctxHuMe = document.getElementById('humoMetano').getContext('2d')
-			var calidad = /*[[${calidad}]]*/ 'default'
-			var temperatura = /*[[${temperatura}]]*/ 'default'
-			var concentracion = /*[[${concentracion}]]*/ 'default'
-			var humedad = /*[[${humedad}]]*/ 'default'
-			var humo = /*[[${humo}]]*/ 'default'
-			var metano = /*[[${metano}]]*/ 'default'
-			console.log(humo)
-			console.log(metano)
-			lineDataChart(ctxCa, calidad, "Calidad")
-			lineDataChart(ctxTe, temperatura, "Temperatura")
-			lineDataChart(ctxCo, concentracion, "Concentracion")
-			lineDataChart(ctxHu, humedad, "Humedad")
-			lineDoubleDataChart(ctxHuMe, humo, metano, "Humo", "Metano")
-		}
-		renderCharts()
-	</script>
-</body>
+function lineDataChart(ctx, temperatura, concentracion, humedad){
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: horas.map(item => item),
+      datasets: [
+        {
+          label: "Temperatura",
+          borderColor: 'blue',
+          data: temperatura.map(item => item),
+        },
+        {
+          label: "Concentracion",
+          borderColor: 'orange',
+          data: concentracion.map(item => item),
+        },
+        {
+          label: "Humedad",
+          borderColor: 'green',
+          data: humedad.map(item => item),
+        }
+      ]
+    },    
+    options: {
+          scales:{
+            xAxes: [{
+              gridLines: {
+                display: false,
+              }
+            }]
+          },
+          title: {
+            display: true,
+            text: 'Temperatura, Concentracion y Humedad - ultimas horas',
+            fontSize: 25,
+            padding: 20,
+            fontColor: '#12619c'
+          },
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 10,
+              boxWidth: 25,
+              fontFamily: 'system-ui',
+              fontColor: 'black',
+            }
+          },
+          layout:{
+            padding: {
+              right: 50,
+            }
+          },
+          tooltips: {
+            backgroundColor: '#0584f6',
+            titleFontSize: 20,
+            xPadding: 20,
+            yPadding: 20,
+            bodyFontSize: 15,
+            bodySpacing: 10,
+            mode: 'x'
+          },
+          elements: {
+            line: {
+              borderWidth: 4,
+              fill: false,
+            },
+            point: {
+              radius: 4,
+              borderWidth: 4,
+              backgroundColor: 'white',
+              hoverRadius: 8,
+              hoverBorderWidth: 4,
+            }
+          }
+        }
+  })
+}
+
+function lineHumoMetanoChart(ctx, data1, data2){
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: horas.map(item => item),
+      datasets: [
+        {
+          label: "Humo",
+          borderColor: 'green',
+          data: data1.map(item => item),
+        },
+        {
+          label: "Metano",
+          borderColor: 'orange',
+          data: data2.map(item => item),
+        }
+      ]
+    },
+    options: {
+        scales:{
+          xAxes: [{
+            gridLines: {
+              display: false,
+            }
+          }]
+        },
+        title: {
+          display: true,
+          text: 'Metano y Humo - ultimas horas',
+          fontSize: 25,
+          padding: 20,
+          fontColor: '#12619c'
+        },
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 10,
+            boxWidth: 25,
+            fontFamily: 'system-ui',
+            fontColor: 'black',
+          }
+        },
+        layout:{
+          padding: {
+            right: 50,
+          }
+        },
+        tooltips: {
+          backgroundColor: '#0584f6',
+          titleFontSize: 20,
+          xPadding: 20,
+          yPadding: 20,
+          bodyFontSize: 15,
+          bodySpacing: 10,
+          mode: 'x'
+        },
+        elements: {
+          line: {
+            borderWidth: 4,
+            fill: false,
+          },
+          point: {
+            radius: 4,
+            borderWidth: 4,
+            backgroundColor: 'white',
+            hoverRadius: 8,
+            hoverBorderWidth: 4,
+          }
+        }
+      }
+  })
+}
+
+function renderCharts(){
+  const ctxCa = document.getElementById('calidad').getContext('2d')
+  const ctxCo = document.getElementById('chartCommon').getContext('2d')
+  const ctxHuMe = document.getElementById('humoMetano').getContext('2d')
+  lineCalidadChart(ctxCa, calidad, "Calidad")
+  lineDataChart(ctxCo, temperatura, concentracion, humedad)
+  lineHumoMetanoChart(ctxHuMe, humo, metano)
+}
+
+function renderTable(){
+  const table = document.getElementById('dataTable')
+  horas.forEach((hora, i) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <th>${hora}</th>
+      <td>${calidad[i]}</td>
+      <td>${temperatura[i]}</td>
+      <td>${concentracion[i]}</td>
+      <td>${humedad[i]}</td>
+      <td>${humo[i]}</td>
+      <td>${metano[i]}</td>
+    `
+    table.appendChild(row)
+  })
+}
+
+function renderHeaderColor() {
+  var header = document.getElementById("header-data")
+  if(estadoCalidad == "Bueno"){
+    header.classList.add("header-data-good")
+  } else if (estadoCalidad == "Moderado"){
+    header.classList.add("header-data-moderate")
+  } else if (estadoCalidad == "Regular"){
+    header.classList.add("header-data-regular")
+  } else if (estadoCalidad == "Malo"){
+    header.classList.add("header-data-bad")
+  }  
+}
+
+renderCharts()
+renderTable()
+renderHeaderColor()
+var lat = parseFloat(/*[[${latitud}]]*/ 'default')
+var lng = parseFloat(/*[[${longitud}]]*/ 'default')
+var myLatLng = { lat:lat, lng:lng };
+setLatLng(myLatLng)
+setData(/*[[${datosMapa}]]*/ 'default')
+
+</script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDaeWicvigtP9xPv919E-RNoxfvC-Hqik&callback=initMap">
+    </script>
+  </body>
 </html>
