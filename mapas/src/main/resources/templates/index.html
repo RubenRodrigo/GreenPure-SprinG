@@ -46,30 +46,29 @@
 		</div>
 	    <div id="map"></div>
 	</section>
-	<table class="table">
-		<thead>
-				<tr>
-					<th scope="col">ID</th>
-					<th scope="col">fecha</th>
-					<th scope="col">pais</th>
-					<th scope="col">ciudad</th>
-					<th scope="col">calidadAVG</th>
-					<th scope="col">Ver Dato</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="dato : ${datosMapa}">
-					<td th:text="${dato.idDistrito}" scope="row"></td>
-					<td th:text="${dato.ciudad}"></td>
-					<td th:text="${dato.latitud}"></td>
-					<td th:text="${dato.longitud}"></td>
-					<td th:text="${dato.calidadAVG}"></td>
-					<td>
-					<button th:onclick="verDatos([[${dato}]])" class="btn btn-danger">verDato</button>
-					</td>
-				</tr>
-			</tbody>
-	</table>
+
+	<section class="container">
+		<h2 class="mapa text-center pb-4 m-4" id="ubicaciones">Ubicaciones</h2>
+		<div class="news-cards">
+			<div class="card" th:each="dato: ${datosMapa}" >
+				<div class="card-header" th:id="'id-'+${dato.idDistrito}">
+					<div class="row">
+						<div class="col-4">
+							<h3 th:text="${dato.calidadAVG}"></h3>				
+						</div>
+						<div class="col-8">
+							<h3 id="card-estadoCalidad">Bueno</h3>				
+						</div>
+					</div>				
+				</div>
+				<div class="card-body">
+					<h5 th:text="${dato.distrito}"></h5>				
+					<p th:text="${dato.ciudad}"></p>				
+					<p class="text-muted" th:text="${dato.fecha}"></p>				
+				</div>
+			</div>
+        </div>
+	</section>
 	<script src="main.js" type="text/javascript"></script>
 	<script th:inline="javascript">
 		setData(/*[[${datosMapa}]]*/ 'default')		

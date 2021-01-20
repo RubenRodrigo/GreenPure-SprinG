@@ -24,6 +24,12 @@ function initMap() {
   // set markers to map
   data.forEach((element) => {
     var classInfo = headerColorCalidad(element.calidadAVG);
+    if(JSON.stringify(myLatLng) === JSON.stringify({ lat: -16.3988084, lng: -71.5390997 })){
+    	var mapCard = document.getElementById(`id-${element.idDistrito}`)
+    	mapCard.classList.add(classInfo)
+    	var h3_card = mapCard.querySelector("#card-estadoCalidad")
+    	h3_card.textContent = CALIDAD_ESTADO
+    }
     var contentString = `    
       <div id="infoWindow">
         <div>
@@ -35,7 +41,7 @@ function initMap() {
               <h3>${element.calidadAVG}</h3> 
             </div>
             <div class="${classInfo}-window-data p-2" style="cursor: pointer" onclick='infoWindowListener(${element.idDistrito})'>
-              <h5>Bueno</h5> 
+              <h5>${CALIDAD_ESTADO}</h5> 
             </div>
           </div>
         </div>
@@ -63,14 +69,19 @@ function headerColorCalidad(calidadAVG){
 var estado = ""
 		if(calidadAVG >= 0 && calidadAVG <= GOOD_AIR) {
 			estado = "header-data-good";
+			CALIDAD_ESTADO = "Bueno";
 		} else if(calidadAVG > GOOD_AIR && calidadAVG <=MODERATE_AIR) {
 			estado = "header-data-moderate";
+			CALIDAD_ESTADO = "Moderado";
 		} else if(calidadAVG > MODERATE_AIR && calidadAVG <= REGULAR_AIR) {
 			estado = "header-data-regular";
+			CALIDAD_ESTADO = "Regular";
 		} else if(calidadAVG > REGULAR_AIR) {
 			estado = "header-data-bad";
+			CALIDAD_ESTADO = "Malo";
 		} else {
 			estado = "NaN";
+			CALIDAD_ESTADO = "Bueno";
 		}
 	return estado
 }
